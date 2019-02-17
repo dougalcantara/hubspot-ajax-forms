@@ -1,0 +1,70 @@
+$body_font: 'Crimson Text', sans-serif;
+$heading_font: 'Montserrat', sans-serif;
+
+$black: #000;
+$white: #fff;
+$primary: #eb3801;
+$highlight: #b59756;
+$silver: #dddddd;
+
+body {
+  font-family: $body_font;
+  font-weight: 400;
+  font-size: 16px;
+  color: $white;
+  background: #323232;
+}
+
+h1,h2,h3,h4,h5,h6 {
+  font-family: $heading_font;
+  font-weight: 700;
+}
+
+button {
+  display: inline-block;
+  font-family: $heading_font;
+  background: $highlight;
+  color: $white;
+  font-size: 100%;
+  font-weight: 700;
+  padding: .75rem 1.5rem;
+  border: 1px solid $highlight;
+  box-sizing: border-box;
+  transition: color 0.2s ease,
+              background 0.2s ease;
+
+  &:hover {
+    cursor: pointer;
+    background: $white;
+    color: $highlight;
+  }
+}
+
+.form {
+  margin: auto;
+  max-width: 500px;
+
+  &-liner {
+    padding: 1rem;
+    // border: 1px solid $highlight;
+  }
+
+  &-input-group {
+    margin-bottom: 1rem;
+  }
+
+  input,
+  label {
+    display: block;
+  }
+
+  input {
+    width: 100%;
+    border: none;
+    padding: .75rem .5rem;
+  }
+
+  label {
+    // padding-left: .5rem;
+  }
+}

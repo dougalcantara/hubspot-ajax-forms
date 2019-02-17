@@ -1,0 +1,26 @@
+{
+  "name": "hubspot-ajax-forms",
+  "version": "0.1.0",
+  "description": "A small library for communicating with HubSpot's AJAX Form endpoint",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "NODE_ENV=development gulp",
+    "build": "NODE_ENV=production gulp"
+  },
+  "author": "Doug Alcantara",
+  "license": "MIT",
+  "devDependencies": {
+    "@babel/core": "^7.3.3",
+    "@babel/preset-env": "^7.3.1",
+    "babel-loader": "^8.0.5",
+    "browser-sync": "^2.26.3",
+    "gulp": "^4.0.0",
+    "gulp-autoprefixer": "^6.0.0",
+    "gulp-sass": "^4.0.2",
+    "gulp-sourcemaps": "^2.6.4",
+    "gulp-util": "^3.0.8",
+    "node-sass": "^4.11.0",
+    "webpack": "^4.29.4"
+  }
+}

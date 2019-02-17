@@ -1,0 +1,5 @@
+.DS_Store
+.env
+node_modules/
+dist/lib/hubspot-ajax-forms.js.map
+dist/test.js.map
