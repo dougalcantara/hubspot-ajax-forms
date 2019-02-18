@@ -95,13 +95,16 @@
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _lib_hubspot_ajax_forms__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./lib/hubspot-ajax-forms */ "./src/lib/hubspot-ajax-forms.js");
+/* harmony import */ var _lib_HubspotAjaxForm__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./lib/HubspotAjaxForm */ "./src/lib/HubspotAjaxForm.js");
 
-var hsAjaxForm = new _lib_hubspot_ajax_forms__WEBPACK_IMPORTED_MODULE_0__["HubspotAjaxForm"]('#hs-test-form', {
+var hsAjaxForm = new _lib_HubspotAjaxForm__WEBPACK_IMPORTED_MODULE_0__["HubspotAjaxForm"]('#hs-test-form', {
   portalId: 510975,
   formId: '3f5c696e-313e-4349-8e9f-a12679bb9ece',
   fieldSelector: '.hs-ajax-input',
-  // withIpAddress: true,
+  context: {
+    ipAddress: true,
+    pageName: true
+  },
   onComplete: function onComplete(response) {
     return console.log(response);
   }
@@ -109,27 +112,10 @@ var hsAjaxForm = new _lib_hubspot_ajax_forms__WEBPACK_IMPORTED_MODULE_0__["Hubsp
 
 /***/ }),
 
-/***/ "./src/lib/globals.js":
-/*!****************************!*\
-  !*** ./src/lib/globals.js ***!
-  \****************************/
-/*! exports provided: GLOBALS */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "GLOBALS", function() { return GLOBALS; });
-var GLOBALS = {
-  BASE_URL: 'https://api.hsforms.com/submissions/v3/integration/submit',
-  IP_URL: 'https://api.ipify.org?format=json'
-};
-
-/***/ }),
-
-/***/ "./src/lib/hubspot-ajax-forms.js":
-/*!***************************************!*\
-  !*** ./src/lib/hubspot-ajax-forms.js ***!
-  \***************************************/
+/***/ "./src/lib/HubspotAjaxForm.js":
+/*!************************************!*\
+  !*** ./src/lib/HubspotAjaxForm.js ***!
+  \************************************/
 /*! exports provided: HubspotAjaxForm */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -137,7 +123,15 @@ var GLOBALS = {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "HubspotAjaxForm", function() { return HubspotAjaxForm; });
 /* harmony import */ var _globals__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./globals */ "./src/lib/globals.js");
-/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./utils */ "./src/lib/utils.js");
+/* harmony import */ var _Utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Utils */ "./src/lib/Utils.js");
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
+
+function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
@@ -145,11 +139,13 @@ function _defineProperties(target, props) { for (var i = 0; i < props.length; i+
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
 
+ // use Symbols to simulate private methods
 
-
-var _validateOptions = Symbol('_validateOptions');
+var _validateRequiredOptions = Symbol('_validateRequiredOptions');
 
 var _enhanceForm = Symbol('_enhanceForm');
+
+var _createPayload = Symbol('_createPayload');
 
 var HubspotAjaxForm =
 /*#__PURE__*/
@@ -159,18 +155,24 @@ function () {
 
     this._form = form;
     this._options = options;
+    this._endpoint = "".concat(_globals__WEBPACK_IMPORTED_MODULE_0__["GLOBALS"].BASE_URL, "/").concat(this._options.portalId, "/").concat(this._options.formId);
+    this._ipAddress = null;
 
-    this[_validateOptions]();
+    this[_validateRequiredOptions]();
 
     this[_enhanceForm]();
   }
 
   _createClass(HubspotAjaxForm, [{
-    key: _validateOptions,
+    key: _validateRequiredOptions,
     value: function value() {
       if (!this._options.portalId) {
         return console.error('[Hubspot AJAX Forms] - A Portal ID is required.');
-      } // TODO: validate all opts
+      }
+
+      if (!this._options.formId) {
+        return console.error('[Hubspot AJAX Forms] - A Form ID is required.');
+      } // TODO: validate all required opts
 
     }
   }, {
@@ -178,6 +180,7 @@ function () {
     value: function value() {
       var _this = this;
 
+      // TODO: let user pass in the form DOMElement OR the CSS Selector for the form
       if (typeof this._form === 'string') {
         this._form = document.querySelector(this._form);
       }
@@ -185,26 +188,59 @@ function () {
       this._form.addEventListener('submit', function (e) {
         e.preventDefault();
 
-        if (_this._options.withIpAddress) {
-          _utils__WEBPACK_IMPORTED_MODULE_1__["Utils"].getUserIp(function (ip) {
-            return _this.submit(ip);
-          });
-        }
+        if (_this._options.context.ipAddress) {
+          // Getting the IP requires a separate xhr. In this case, submit the form after that xhr has completed
+          _Utils__WEBPACK_IMPORTED_MODULE_1__["Utils"].getUserIp(function (ip) {
+            _this._ipAddress = ip;
 
-        _this.submit();
+            _this.submit();
+          });
+        } else {
+          _this.submit();
+        }
       });
     }
   }, {
+    key: _createPayload,
+    value: function value() {
+      var context = this._options.context; // convert the NodeList into an Array so that it can be map()'d over
+
+      var fieldValues = _toConsumableArray(document.querySelectorAll(this._options.fieldSelector)).map(function (field) {
+        return {
+          name: field.name,
+          value: field.value
+        };
+      });
+
+      var payload = {
+        submittedAt: Date.now(),
+        fields: fieldValues,
+        context: {} // TODO: maybe initialize this prop in the constructor?
+
+      }; // TODO: make context checking DRYer and support users that don't want to include any context
+
+      if (context.pageName) {
+        payload.context.pageName = document.title;
+      }
+
+      if (context.ipAddress) {
+        payload.context.ipAddress = this._ipAddress;
+      }
+
+      return JSON.stringify(payload);
+    }
+  }, {
     key: "submit",
-    value: function submit(ipAddress) {
+    value: function submit() {
       var _this2 = this;
 
       if (typeof this._options.onSubmit === 'function') {
         return this._options.onSubmit();
-      }
+      } // TODO: create xhr micro-lib. There may be multiple XHR's based on supplied context
+
 
       var xhr = new XMLHttpRequest();
-      xhr.open('POST', "".concat(_globals__WEBPACK_IMPORTED_MODULE_0__["GLOBALS"].BASE_URL, "/").concat(this._options.portalId, "/").concat(this._options.formId));
+      xhr.open('POST', this._endpoint);
       xhr.setRequestHeader('Content-Type', 'application/json');
 
       xhr.onreadystatechange = function () {
@@ -216,21 +252,7 @@ function () {
         }
       };
 
-      var formFields = document.querySelectorAll(this._options.fieldSelector);
-      var fieldValues = [];
-
-      for (var i = 0, n = formFields.length; i < n; i++) {
-        var thisField = formFields[i];
-        fieldValues.push({
-          name: thisField.name,
-          value: thisField.value
-        });
-      }
-
-      xhr.send(JSON.stringify({
-        submittedAt: Date.now(),
-        fields: fieldValues
-      }));
+      xhr.send(this[_createPayload]());
     }
   }]);
 
@@ -239,9 +261,9 @@ function () {
 
 /***/ }),
 
-/***/ "./src/lib/utils.js":
+/***/ "./src/lib/Utils.js":
 /*!**************************!*\
-  !*** ./src/lib/utils.js ***!
+  !*** ./src/lib/Utils.js ***!
   \**************************/
 /*! exports provided: Utils */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -282,6 +304,23 @@ function () {
 
   return Utils;
 }();
+
+/***/ }),
+
+/***/ "./src/lib/globals.js":
+/*!****************************!*\
+  !*** ./src/lib/globals.js ***!
+  \****************************/
+/*! exports provided: GLOBALS */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "GLOBALS", function() { return GLOBALS; });
+var GLOBALS = {
+  BASE_URL: 'https://api.hsforms.com/submissions/v3/integration/submit',
+  IP_URL: 'https://api.ipify.org?format=json'
+};
 
 /***/ })
 

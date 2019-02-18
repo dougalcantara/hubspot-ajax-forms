@@ -3,7 +3,7 @@ const path = require('path');
 module.exports = [
   {
     mode: process.env.NODE_ENV,
-    entry: path.resolve(__dirname, 'src/lib/hubspot-ajax-forms.js'),
+    entry: path.resolve(__dirname, 'src/lib/HubspotAjaxForm.js'),
     output: {
       path: path.resolve(__dirname, 'dist/'),
       filename: 'hubspot-ajax-forms.js',
