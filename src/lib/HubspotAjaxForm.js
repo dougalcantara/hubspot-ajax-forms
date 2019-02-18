@@ -17,16 +17,18 @@ export class HubspotAjaxForm {
     this[_enhanceForm]();
   }
 
-  [_validateRequiredOptions]() {
+  [_validateRequiredOptions]() { // TODO: this needs to be DRY'd up
     if (!this._options.portalId) {
-      return console.error('[Hubspot AJAX Forms] - A Portal ID is required.');
+      return console.error('[Hubspot AJAX Forms] - A portalId is required.');
     }
 
     if (!this._options.formId) {
-      return console.error('[Hubspot AJAX Forms] - A Form ID is required.');
+      return console.error('[Hubspot AJAX Forms] - A formId is required.');
     }
 
-    // TODO: validate all required opts
+    if (!this._options.fieldSelector) {
+      return console.error('[Hubspot AJAX Forms] - A fieldSelector is required.');
+    }
   }
 
   [_enhanceForm]() {
@@ -38,7 +40,7 @@ export class HubspotAjaxForm {
     this._form.addEventListener('submit', e => {
       e.preventDefault();
 
-      if (this._options.context.ipAddress) {
+      if (this._options.withIpAddress) {
         // Getting the IP requires a separate xhr. In this case, submit the form after that xhr has completed
         Utils.getUserIp(ip => {
           this._ipAddress = ip;
@@ -51,7 +53,6 @@ export class HubspotAjaxForm {
   }
 
   [_createPayload]() {
-    const { context } = this._options;
     // convert the NodeList into an Array so that it can be map()'d over
     const fieldValues = [...document.querySelectorAll(this._options.fieldSelector)].map(field => ({
       name: field.name,
@@ -61,15 +62,10 @@ export class HubspotAjaxForm {
     const payload = {
       submittedAt: Date.now(),
       fields: fieldValues,
-      context: {}, // TODO: maybe initialize this prop in the constructor?
+      context: this._options.context,
     };
 
-    // TODO: make context checking DRYer and support users that don't want to include any context
-    if (context.pageName) {
-      payload.context.pageName = document.title;
-    }
-
-    if (context.ipAddress) {
+    if (this._options.withIpAddress) {
       payload.context.ipAddress = this._ipAddress;
     }
 

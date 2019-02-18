@@ -101,9 +101,11 @@ var hsAjaxForm = new _lib_HubspotAjaxForm__WEBPACK_IMPORTED_MODULE_0__["HubspotA
   portalId: 510975,
   formId: '3f5c696e-313e-4349-8e9f-a12679bb9ece',
   fieldSelector: '.hs-ajax-input',
+  withIpAddress: true,
   context: {
-    ipAddress: true,
-    pageName: true
+    hutk: '3aea3ab5985f7bc544e847d1f76b5857',
+    pageName: document.title,
+    pageUri: window.location.href
   },
   onComplete: function onComplete(response) {
     return console.log(response);
@@ -166,14 +168,18 @@ function () {
   _createClass(HubspotAjaxForm, [{
     key: _validateRequiredOptions,
     value: function value() {
+      // TODO: this needs to be DRY'd up
       if (!this._options.portalId) {
-        return console.error('[Hubspot AJAX Forms] - A Portal ID is required.');
+        return console.error('[Hubspot AJAX Forms] - A portalId is required.');
       }
 
       if (!this._options.formId) {
-        return console.error('[Hubspot AJAX Forms] - A Form ID is required.');
-      } // TODO: validate all required opts
+        return console.error('[Hubspot AJAX Forms] - A formId is required.');
+      }
 
+      if (!this._options.fieldSelector) {
+        return console.error('[Hubspot AJAX Forms] - A fieldSelector is required.');
+      }
     }
   }, {
     key: _enhanceForm,
@@ -188,7 +194,7 @@ function () {
       this._form.addEventListener('submit', function (e) {
         e.preventDefault();
 
-        if (_this._options.context.ipAddress) {
+        if (_this._options.withIpAddress) {
           // Getting the IP requires a separate xhr. In this case, submit the form after that xhr has completed
           _Utils__WEBPACK_IMPORTED_MODULE_1__["Utils"].getUserIp(function (ip) {
             _this._ipAddress = ip;
@@ -203,8 +209,7 @@ function () {
   }, {
     key: _createPayload,
     value: function value() {
-      var context = this._options.context; // convert the NodeList into an Array so that it can be map()'d over
-
+      // convert the NodeList into an Array so that it can be map()'d over
       var fieldValues = _toConsumableArray(document.querySelectorAll(this._options.fieldSelector)).map(function (field) {
         return {
           name: field.name,
@@ -215,15 +220,10 @@ function () {
       var payload = {
         submittedAt: Date.now(),
         fields: fieldValues,
-        context: {} // TODO: maybe initialize this prop in the constructor?
+        context: this._options.context
+      };
 
-      }; // TODO: make context checking DRYer and support users that don't want to include any context
-
-      if (context.pageName) {
-        payload.context.pageName = document.title;
-      }
-
-      if (context.ipAddress) {
+      if (this._options.withIpAddress) {
         payload.context.ipAddress = this._ipAddress;
       }
 
