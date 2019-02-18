@@ -9,9 +9,9 @@ const browserSync = require('browser-sync').create();
 
 const PATHS = {
   builtJS: './dist/**/*.js',
-  testHTML: './dist/index.html',
+  testHTML: './test/index.html',
   scss: './src/scss/**/*.scss',
-  builtCSS: './dist/css/',
+  builtCSS: './test/css/',
 };
 
 function reload(done) {
@@ -24,7 +24,7 @@ function serve(done) {
   browserSync.init({
     notify: false,
     server: {
-      baseDir: 'dist/',
+      baseDir: 'test/',
     }
   });
 

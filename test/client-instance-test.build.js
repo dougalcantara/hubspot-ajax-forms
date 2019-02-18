@@ -81,10 +81,33 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = "./src/test.js");
+/******/ 	return __webpack_require__(__webpack_require__.s = "./src/client-instance-test.js");
 /******/ })
 /************************************************************************/
 /******/ ({
+
+/***/ "./src/client-instance-test.js":
+/*!*************************************!*\
+  !*** ./src/client-instance-test.js ***!
+  \*************************************/
+/*! no exports provided */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _lib_hubspot_ajax_forms__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./lib/hubspot-ajax-forms */ "./src/lib/hubspot-ajax-forms.js");
+
+var hsAjaxForm = new _lib_hubspot_ajax_forms__WEBPACK_IMPORTED_MODULE_0__["HubspotAjaxForm"]('#hs-test-form', {
+  portalId: 510975,
+  formId: '3f5c696e-313e-4349-8e9f-a12679bb9ece',
+  fieldSelector: '.hs-ajax-input',
+  // withIpAddress: true,
+  onComplete: function onComplete(response) {
+    return console.log(response);
+  }
+});
+
+/***/ }),
 
 /***/ "./src/lib/globals.js":
 /*!****************************!*\
@@ -260,30 +283,7 @@ function () {
   return Utils;
 }();
 
-/***/ }),
-
-/***/ "./src/test.js":
-/*!*********************!*\
-  !*** ./src/test.js ***!
-  \*********************/
-/*! no exports provided */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _lib_hubspot_ajax_forms__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./lib/hubspot-ajax-forms */ "./src/lib/hubspot-ajax-forms.js");
-
-var hsAjaxForm = new _lib_hubspot_ajax_forms__WEBPACK_IMPORTED_MODULE_0__["HubspotAjaxForm"]('#hs-test-form', {
-  portalId: 510975,
-  formId: '3f5c696e-313e-4349-8e9f-a12679bb9ece',
-  fieldSelector: '.hs-ajax-input',
-  // withIpAddress: true,
-  onComplete: function onComplete(response) {
-    return console.log(response);
-  }
-});
-
 /***/ })
 
 /******/ });
-//# sourceMappingURL=test.js.map
+//# sourceMappingURL=client-instance-test.build.js.map
