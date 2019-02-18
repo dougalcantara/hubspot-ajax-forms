@@ -32,6 +32,8 @@ export class HubspotAjaxForm {
       if (this._options.withIpAddress) {
         Utils.getUserIp(ip => this.submit(ip));
       }
+
+      this.submit();
     });
   }
 
@@ -48,10 +50,28 @@ export class HubspotAjaxForm {
 
     xhr.onreadystatechange = () => {
       if (xhr.readyState === XMLHttpRequest.DONE) {
-        cb(JSON.parse(xhr.responseText).ip);
+        this._options.onComplete({
+          response: JSON.parse(xhr.response),
+          status: xhr.status,
+        });
       }
     }
 
-    // xhr.send(JSON.stringify());
+    const formFields = document.querySelectorAll(this._options.fieldSelector);
+    const fieldValues = [];
+
+    for (let i = 0, n = formFields.length; i < n; i++) {
+      const thisField = formFields[i];
+
+      fieldValues.push({
+        name: thisField.name,
+        value: thisField.value,
+      });
+    }
+
+    xhr.send(JSON.stringify({
+      submittedAt: Date.now(),
+      fields: fieldValues,
+    }));
   }
 }

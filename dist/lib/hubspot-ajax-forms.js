@@ -167,11 +167,15 @@ function () {
             return _this.submit(ip);
           });
         }
+
+        _this.submit();
       });
     }
   }, {
     key: "submit",
     value: function submit(ipAddress) {
+      var _this2 = this;
+
       if (typeof this._options.onSubmit === 'function') {
         return this._options.onSubmit();
       }
@@ -182,10 +186,28 @@ function () {
 
       xhr.onreadystatechange = function () {
         if (xhr.readyState === XMLHttpRequest.DONE) {
-          cb(JSON.parse(xhr.responseText).ip);
+          _this2._options.onComplete({
+            response: JSON.parse(xhr.response),
+            status: xhr.status
+          });
         }
-      }; // xhr.send(JSON.stringify());
+      };
 
+      var formFields = document.querySelectorAll(this._options.fieldSelector);
+      var fieldValues = [];
+
+      for (var i = 0, n = formFields.length; i < n; i++) {
+        var thisField = formFields[i];
+        fieldValues.push({
+          name: thisField.name,
+          value: thisField.value
+        });
+      }
+
+      xhr.send(JSON.stringify({
+        submittedAt: Date.now(),
+        fields: fieldValues
+      }));
     }
   }]);
 
