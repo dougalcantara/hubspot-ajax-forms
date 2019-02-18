@@ -1,0 +1,8 @@
+/test
+/src
+.DS_Store
+.env
+webpack.config.js
+node_modules/
+dist/hubspot-ajax-forms.js.map
+test/client-instance-test.build.js.map
