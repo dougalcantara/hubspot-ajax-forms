@@ -107,6 +107,7 @@ var hsAjaxForm = new _lib_HubspotAjaxForm__WEBPACK_IMPORTED_MODULE_0__["HubspotA
     pageName: document.title,
     pageUri: window.location.href
   },
+  // onSubmit: payload => console.log(JSON.parse(payload)),
   onComplete: function onComplete(response) {
     return console.log(response);
   }
@@ -126,14 +127,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "HubspotAjaxForm", function() { return HubspotAjaxForm; });
 /* harmony import */ var _globals__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./globals */ "./src/lib/globals.js");
 /* harmony import */ var _Utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Utils */ "./src/lib/Utils.js");
-function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
-
-function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
-
-function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
-
-function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
-
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
@@ -209,17 +202,9 @@ function () {
   }, {
     key: _createPayload,
     value: function value() {
-      // convert the NodeList into an Array so that it can be map()'d over
-      var fieldValues = _toConsumableArray(document.querySelectorAll(this._options.fieldSelector)).map(function (field) {
-        return {
-          name: field.name,
-          value: field.value
-        };
-      });
-
       var payload = {
+        fields: _Utils__WEBPACK_IMPORTED_MODULE_1__["Utils"].createPropertyPairs(this._options.fieldSelector),
         submittedAt: Date.now(),
-        fields: fieldValues,
         context: this._options.context
       };
 
@@ -235,7 +220,9 @@ function () {
       var _this2 = this;
 
       if (typeof this._options.onSubmit === 'function') {
-        return this._options.onSubmit();
+        // let user opt-out of this lib's submit functionality and hijack it w/ their own
+        // pass them the packaged-up payload as well
+        return this._options.onSubmit(this[_createPayload]());
       } // TODO: create xhr micro-lib. There may be multiple XHR's based on supplied context
 
 
@@ -272,6 +259,14 @@ function () {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Utils", function() { return Utils; });
 /* harmony import */ var _globals__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./globals */ "./src/lib/globals.js");
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
+
+function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
@@ -299,6 +294,25 @@ function () {
       };
 
       xhr.send(null);
+    }
+  }, {
+    key: "createPropertyPairs",
+    value: function createPropertyPairs(selector) {
+      return _toConsumableArray(document.querySelectorAll(selector)).map(function (input) {
+        switch (input.type) {
+          case 'checkbox':
+            return {
+              name: input.name,
+              value: !!input.checked
+            };
+
+          default:
+            return {
+              name: input.name,
+              value: input.value
+            };
+        }
+      });
     }
   }]);
 

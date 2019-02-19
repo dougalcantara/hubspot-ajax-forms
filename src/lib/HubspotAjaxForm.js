@@ -53,15 +53,9 @@ export class HubspotAjaxForm {
   }
 
   [_createPayload]() {
-    // convert the NodeList into an Array so that it can be map()'d over
-    const fieldValues = [...document.querySelectorAll(this._options.fieldSelector)].map(field => ({
-      name: field.name,
-      value: field.value,
-    }));
-
     const payload = {
+      fields: Utils.createPropertyPairs(this._options.fieldSelector),
       submittedAt: Date.now(),
-      fields: fieldValues,
       context: this._options.context,
     };
 
@@ -74,7 +68,9 @@ export class HubspotAjaxForm {
 
   submit() {
     if (typeof(this._options.onSubmit) === 'function') {
-      return this._options.onSubmit();
+      // let user opt-out of this lib's submit functionality and hijack it w/ their own
+      // pass them the packaged-up payload as well
+      return this._options.onSubmit(this[_createPayload]());
     }
     
     // TODO: create xhr micro-lib. There may be multiple XHR's based on supplied context
