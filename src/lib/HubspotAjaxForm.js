@@ -37,7 +37,7 @@ export class HubspotAjaxForm {
       this._form = document.querySelector(this._form);
     }
 
-    this._form.addEventListener('submit', e => {
+    this._form.addEventListener('submit', (e) => {
       e.preventDefault();
 
       if (this._options.withIpAddress) {

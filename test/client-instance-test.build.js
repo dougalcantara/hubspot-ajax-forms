@@ -97,7 +97,8 @@
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _lib_HubspotAjaxForm__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./lib/HubspotAjaxForm */ "./src/lib/HubspotAjaxForm.js");
 
-var hsAjaxForm = new _lib_HubspotAjaxForm__WEBPACK_IMPORTED_MODULE_0__["HubspotAjaxForm"]('#hs-test-form', {
+var form = document.querySelector('#hs-test-form');
+var hsAjaxForm = new _lib_HubspotAjaxForm__WEBPACK_IMPORTED_MODULE_0__["HubspotAjaxForm"](form, {
   portalId: 510975,
   formId: '3f5c696e-313e-4349-8e9f-a12679bb9ece',
   fieldSelector: '.hs-ajax-input',
@@ -107,7 +108,9 @@ var hsAjaxForm = new _lib_HubspotAjaxForm__WEBPACK_IMPORTED_MODULE_0__["HubspotA
     pageName: document.title,
     pageUri: window.location.href
   },
-  // onSubmit: payload => console.log(JSON.parse(payload)),
+  onSubmit: function onSubmit(payload) {
+    return console.log(JSON.parse(payload));
+  },
   onComplete: function onComplete(response) {
     return console.log(response);
   }
@@ -299,18 +302,22 @@ function () {
     key: "createPropertyPairs",
     value: function createPropertyPairs(selector) {
       return _toConsumableArray(document.querySelectorAll(selector)).map(function (input) {
+        var propPair = {
+          name: input.name,
+          value: input.value
+        };
+
         switch (input.type) {
+          case 'date':
+            propPair.value = new Date(input.value).getTime() / 1000;
+            return propPair;
+
           case 'checkbox':
-            return {
-              name: input.name,
-              value: !!input.checked
-            };
+            propPair.value = !!input.checked;
+            return propPair;
 
           default:
-            return {
-              name: input.name,
-              value: input.value
-            };
+            return propPair;
         }
       });
     }

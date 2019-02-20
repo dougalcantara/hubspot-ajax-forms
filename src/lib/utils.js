@@ -13,12 +13,19 @@ export class Utils {
   }
 
   static createPropertyPairs(selector) {
-    return [...document.querySelectorAll(selector)].map(input => {
+    return [...document.querySelectorAll(selector)].map((input) => {
+
+      let propPair = { name: input.name, value: input.value };
+
       switch (input.type) {
+        case 'date': 
+          propPair.value = (new Date(input.value).getTime() / 1000);
+          return propPair;
         case 'checkbox':
-          return { name: input.name, value: !!(input.checked) };
+          propPair.value = !!(input.checked);
+          return propPair;
         default:
-          return { name: input.name, value: input.value };
+          return propPair;
       }
     });
   }

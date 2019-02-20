@@ -270,18 +270,22 @@ function () {
     key: "createPropertyPairs",
     value: function createPropertyPairs(selector) {
       return _toConsumableArray(document.querySelectorAll(selector)).map(function (input) {
+        var propPair = {
+          name: input.name,
+          value: input.value
+        };
+
         switch (input.type) {
+          case 'date':
+            propPair.value = new Date(input.value).getTime() / 1000;
+            return propPair;
+
           case 'checkbox':
-            return {
-              name: input.name,
-              value: !!input.checked
-            };
+            propPair.value = !!input.checked;
+            return propPair;
 
           default:
-            return {
-              name: input.name,
-              value: input.value
-            };
+            return propPair;
         }
       });
     }
