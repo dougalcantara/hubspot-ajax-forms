@@ -3,6 +3,7 @@
 .DS_Store
 .env
 webpack.config.js
+.eslintrc.js
 gulpfile.js
 node_modules/
 dist/hubspot-ajax-forms.js.map
