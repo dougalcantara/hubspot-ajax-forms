@@ -1,6 +1,6 @@
 {
   "name": "hubspot-ajax-forms",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "A small library for communicating with HubSpot's AJAX Form endpoint",
   "main": "dist/hubspot-ajax-forms.js",
   "scripts": {
