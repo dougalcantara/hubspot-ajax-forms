@@ -1,6 +1,6 @@
-import { HubspotAjaxForm } from './lib/HubspotAjaxForm';
+import { HubspotAjaxForm } from '../dist/hubspot-ajax-forms';
 
-const form = document.querySelector('#hs-test-form')
+const form = document.querySelector('#hs-test-form');
 
 const hsAjaxForm = new HubspotAjaxForm(form, {
   portalId: 510975,

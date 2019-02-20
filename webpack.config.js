@@ -7,6 +7,8 @@ module.exports = [
     output: {
       path: path.resolve(__dirname, 'dist/'),
       filename: 'hubspot-ajax-forms.js',
+      library: 'HubspotAjaxForms',
+      libraryTarget: 'umd',
     },
     module: {
       rules: [
