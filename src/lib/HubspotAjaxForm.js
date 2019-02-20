@@ -10,7 +10,7 @@ export class HubspotAjaxForm {
   constructor(form, options) {
     this._form = form;
     this._options = options;
-    this._endpoint = `${ GLOBALS.BASE_URL }/${ this._options.portalId }/${ this._options.formId }`;
+    this._endpoint = `${GLOBALS.BASE_URL}/${this._options.portalId}/${this._options.formId}`;
     this._ipAddress = null;
 
     this[_validateRequiredOptions]();
@@ -29,11 +29,13 @@ export class HubspotAjaxForm {
     if (!this._options.fieldSelector) {
       return console.error('[Hubspot AJAX Forms] - A fieldSelector is required.');
     }
+
+    return true;
   }
 
   [_enhanceForm]() {
     // TODO: let user pass in the form DOMElement OR the CSS Selector for the form
-    if (typeof(this._form) === 'string') {
+    if (typeof (this._form) === 'string') {
       this._form = document.querySelector(this._form);
     }
 
@@ -41,8 +43,9 @@ export class HubspotAjaxForm {
       e.preventDefault();
 
       if (this._options.withIpAddress) {
-        // Getting the IP requires a separate xhr. In this case, submit the form after that xhr has completed
-        Utils.getUserIp(ip => {
+        // Getting the IP requires a separate xhr.
+        // In this case, submit the form after that xhr has completed.
+        Utils.getUserIp((ip) => {
           this._ipAddress = ip;
           this.submit();
         });
@@ -67,12 +70,12 @@ export class HubspotAjaxForm {
   }
 
   submit() {
-    if (typeof(this._options.onSubmit) === 'function') {
+    if (typeof (this._options.onSubmit) === 'function') {
       // let user opt-out of this lib's submit functionality and hijack it w/ their own
       // pass them the packaged-up payload as well
       return this._options.onSubmit(this[_createPayload]());
     }
-    
+
     // TODO: create xhr micro-lib. There may be multiple XHR's based on supplied context
     const xhr = new XMLHttpRequest();
 
@@ -87,8 +90,10 @@ export class HubspotAjaxForm {
           status: xhr.status,
         });
       }
-    }
+    };
 
     xhr.send(this[_createPayload]());
+
+    return true;
   }
 }

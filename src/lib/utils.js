@@ -5,20 +5,19 @@ export class Utils {
     const xhr = new XMLHttpRequest();
     xhr.open('GET', GLOBALS.IP_URL);
     xhr.onreadystatechange = () => {
-      if (xhr.readyState == XMLHttpRequest.DONE) {
+      if (xhr.readyState === XMLHttpRequest.DONE) {
         cb(JSON.parse(xhr.responseText).ip);
       }
-    }
+    };
     xhr.send(null);
   }
 
   static createPropertyPairs(selector) {
     return [...document.querySelectorAll(selector)].map((input) => {
-
-      let propPair = { name: input.name, value: input.value };
+      const propPair = { name: input.name, value: input.value };
 
       switch (input.type) {
-        case 'date': 
+        case 'date':
           propPair.value = (new Date(input.value).getTime() / 1000);
           return propPair;
         case 'checkbox':

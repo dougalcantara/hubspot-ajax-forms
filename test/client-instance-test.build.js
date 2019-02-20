@@ -176,6 +176,8 @@ function () {
       if (!this._options.fieldSelector) {
         return console.error('[Hubspot AJAX Forms] - A fieldSelector is required.');
       }
+
+      return true;
     }
   }, {
     key: _enhanceForm,
@@ -191,7 +193,8 @@ function () {
         e.preventDefault();
 
         if (_this._options.withIpAddress) {
-          // Getting the IP requires a separate xhr. In this case, submit the form after that xhr has completed
+          // Getting the IP requires a separate xhr.
+          // In this case, submit the form after that xhr has completed.
           _Utils__WEBPACK_IMPORTED_MODULE_1__["Utils"].getUserIp(function (ip) {
             _this._ipAddress = ip;
 
@@ -243,6 +246,7 @@ function () {
       };
 
       xhr.send(this[_createPayload]());
+      return true;
     }
   }]);
 
@@ -291,7 +295,7 @@ function () {
       xhr.open('GET', _globals__WEBPACK_IMPORTED_MODULE_0__["GLOBALS"].IP_URL);
 
       xhr.onreadystatechange = function () {
-        if (xhr.readyState == XMLHttpRequest.DONE) {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
           cb(JSON.parse(xhr.responseText).ip);
         }
       };
