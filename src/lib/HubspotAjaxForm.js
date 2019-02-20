@@ -76,6 +76,8 @@ export class HubspotAjaxForm {
       return this._options.onSubmit(this[_createPayload]());
     }
 
+    this._form.classList.add('hs-ajax-form--working');
+
     // TODO: create xhr micro-lib. There may be multiple XHR's based on supplied context
     const xhr = new XMLHttpRequest();
 
@@ -89,6 +91,9 @@ export class HubspotAjaxForm {
           response: JSON.parse(xhr.response),
           status: xhr.status,
         });
+
+        this._form.classList.remove('hs-ajax-form--working');
+        this._form.classList.add('hs-ajax-form--submitted');
       }
     };
 
