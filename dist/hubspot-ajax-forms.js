@@ -207,7 +207,9 @@ function () {
         // let user opt-out of this lib's submit functionality and hijack it w/ their own
         // pass them the packaged-up payload as well
         return this._options.onSubmit(this[_createPayload]());
-      } // TODO: create xhr micro-lib. There may be multiple XHR's based on supplied context
+      }
+
+      this._form.classList.add('hs-ajax-form--working'); // TODO: create xhr micro-lib. There may be multiple XHR's based on supplied context
 
 
       var xhr = new XMLHttpRequest();
@@ -220,6 +222,10 @@ function () {
             response: JSON.parse(xhr.response),
             status: xhr.status
           });
+
+          _this2._form.classList.remove('hs-ajax-form--working');
+
+          _this2._form.classList.add('hs-ajax-form--submitted');
         }
       };
 
