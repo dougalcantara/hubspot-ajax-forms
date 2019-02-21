@@ -1,13 +1,12 @@
 {
   "name": "hubspot-ajax-forms",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "A small library for communicating with HubSpot's AJAX Form endpoint",
   "main": "dist/hubspot-ajax-forms.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "eslint src/**/*.js && NODE_ENV=development gulp",
-    "build": "eslint src/**/*.js && NODE_ENV=production gulp",
-    "publish": "npm run build"
+    "build": "eslint src/**/*.js && NODE_ENV=production gulp"
   },
   "homepage": "https://github.com/dougalcantara/hubspot-ajax-forms/blob/master/README.md",
   "keywords": [

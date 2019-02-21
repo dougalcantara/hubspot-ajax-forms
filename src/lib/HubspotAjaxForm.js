@@ -11,6 +11,7 @@ export class HubspotAjaxForm {
     this._form = form;
     this._options = options;
     this._endpoint = `${GLOBALS.BASE_URL}/${this._options.portalId}/${this._options.formId}`;
+    this._event = null;
     this._ipAddress = null;
     this._submitTrigger = null;
 
@@ -45,6 +46,7 @@ export class HubspotAjaxForm {
 
     this._form.addEventListener('submit', (e) => {
       e.preventDefault();
+      this._event = e;
 
       if (this._options.withIpAddress) {
         // Getting the IP requires a separate xhr.
@@ -75,7 +77,7 @@ export class HubspotAjaxForm {
 
   submit() {
     if (typeof (this._options.onSubmit) === 'function') {
-      this._options.onSubmit(this[_createPayload]());
+      this._options.onSubmit(this._event, this[_createPayload]());
     }
 
     this._form.classList.add('hs-ajax-form--working');
