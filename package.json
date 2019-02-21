@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "eslint src/**/*.js && NODE_ENV=development gulp",
-    "build": "eslint src/**/*.js && NODE_ENV=production gulp"
+    "build": "eslint src/**/*.js && NODE_ENV=production gulp",
+    "publish": "npm run build"
   },
   "homepage": "https://github.com/dougalcantara/hubspot-ajax-forms/blob/master/README.md",
   "keywords": [
@@ -33,6 +34,7 @@
     "gulp-sourcemaps": "^2.6.4",
     "gulp-util": "^3.0.8",
     "node-sass": "^4.11.0",
+    "uglifyjs-webpack-plugin": "^2.1.1",
     "webpack": "^4.29.4"
   }
 }

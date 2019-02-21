@@ -12,6 +12,7 @@ export class HubspotAjaxForm {
     this._options = options;
     this._endpoint = `${GLOBALS.BASE_URL}/${this._options.portalId}/${this._options.formId}`;
     this._ipAddress = null;
+    this._submitTrigger = null;
 
     this[_validateRequiredOptions]();
     this[_enhanceForm]();
@@ -38,6 +39,9 @@ export class HubspotAjaxForm {
     if (typeof (this._form) === 'string') {
       this._form = document.querySelector(this._form);
     }
+
+    // TODO: allow for custom submit trigger
+    this._submitTrigger = this._form.querySelector('button[type="submit"]');
 
     this._form.addEventListener('submit', (e) => {
       e.preventDefault();
@@ -71,12 +75,11 @@ export class HubspotAjaxForm {
 
   submit() {
     if (typeof (this._options.onSubmit) === 'function') {
-      // let user opt-out of this lib's submit functionality and hijack it w/ their own
-      // pass them the packaged-up payload as well
-      return this._options.onSubmit(this[_createPayload]());
+      this._options.onSubmit(this[_createPayload]());
     }
 
     this._form.classList.add('hs-ajax-form--working');
+    this._submitTrigger.setAttribute('disabled', 'disabled');
 
     // TODO: create xhr micro-lib. There may be multiple XHR's based on supplied context
     const xhr = new XMLHttpRequest();
@@ -94,6 +97,7 @@ export class HubspotAjaxForm {
 
         this._form.classList.remove('hs-ajax-form--working');
         this._form.classList.add('hs-ajax-form--submitted');
+        this._submitTrigger.removeAttribute('disabled');
       }
     };
 
