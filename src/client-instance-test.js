@@ -12,6 +12,6 @@ const hsAjaxForm = new HubspotAjaxForm(form, {
     pageName: document.title,
     pageUri: window.location.href,
   },
-  onSubmit: payload => console.log(JSON.parse(payload)),
+  onSubmit: payload => console.log(payload),
   onComplete: response => console.log(response),
 });

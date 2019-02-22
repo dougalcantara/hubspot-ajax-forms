@@ -80,8 +80,7 @@ export class HubspotAjaxForm {
       this._options.onSubmit(this._event, this[_createPayload]());
     }
 
-    this._form.classList.add('hs-ajax-form--working');
-    this._submitTrigger.setAttribute('disabled', 'disabled');
+    Utils.handleFormState(this._form, this._submitTrigger);
 
     // TODO: create xhr micro-lib. There may be multiple XHR's based on supplied context
     const xhr = new XMLHttpRequest();
@@ -97,9 +96,7 @@ export class HubspotAjaxForm {
           status: xhr.status,
         });
 
-        this._form.classList.remove('hs-ajax-form--working');
-        this._form.classList.add('hs-ajax-form--submitted');
-        this._submitTrigger.removeAttribute('disabled');
+        Utils.handleFormState(this._form, this._submitTrigger, true);
       }
     };
 

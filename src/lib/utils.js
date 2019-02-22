@@ -28,4 +28,15 @@ export class Utils {
       }
     });
   }
+
+  static handleFormState(form, trigger, enabled = false) {
+    if (!enabled) {
+      form.classList.add('hs-ajax-form--working');
+      trigger.setAttribute('disabled', 'disabled');
+    } else {
+      form.classList.remove('hs-ajax-form--working');
+      form.classList.add('hs-ajax-form--submitted');
+      trigger.removeAttribute('disabled');
+    }
+  }
 }
